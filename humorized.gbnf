@@ -1,0 +1,9 @@
+root ::= HumorizedArticle
+HumorizedArticle ::= "{"   ws   "\"Funny_Title\":"   ws   string   ","   ws   "\"Funny_Content\":"   ws   string   "}"
+HumorizedArticlelist ::= "[]" | "["   ws   HumorizedArticle   (","   ws   HumorizedArticle)*   "]"
+string ::= "\""   ([^"]*)   "\""
+boolean ::= "true" | "false"
+ws ::= [ \t\n]*
+number ::= [0-9]+   "."?   [0-9]*
+stringlist ::= "["   ws   "]" | "["   ws   string   (","   ws   string)*   ws   "]"
+numberlist ::= "["   ws   "]" | "["   ws   string   (","   ws   number)*   ws   "]"
