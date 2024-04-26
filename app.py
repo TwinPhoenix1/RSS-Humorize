@@ -40,7 +40,7 @@ def home():
     if 'content' in session: 
         humorized = session['content']
     else:
-        articles = fetch_articles(feeds)
+        articles = scrape_articles(feeds)
         articles = articles[:1]
         humorized = humorize(articles, prompt, model_path)
         session['content'] = humorized

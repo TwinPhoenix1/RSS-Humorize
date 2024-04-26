@@ -4,6 +4,7 @@ from llama_cpp.llama import Llama, LlamaGrammar
 import article_parser
 import json
 import lorem
+from newspaper import Article
 
 def fetch_articles(feeds):
     for url in feeds:
@@ -24,10 +25,12 @@ def scrape_articles(feeds):
         feed = feedparser.parse(url)
         articles = []
         for entry in feed.entries:
-            title, content = article_parser.parse(url=entry.link, timeout=5)
+            a = Article(entry.link)
+            a.download()
+            a.parse()
             article = {
-                'title': BeautifulSoup(title, 'html.parser'), 
-                'content': BeautifulSoup(content, 'html.parser')} 
+                'title': BeautifulSoup(a.title, 'html.parser'), 
+                'content': BeautifulSoup(a.text, 'html.parser')} 
             articles.append(article)
     return articles
 
