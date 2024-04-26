@@ -6,7 +6,10 @@ from pydantic import BaseModel
 import os
 import json
 
-target_rss = "https://www.vox.com/rss/index.xml"
+# your path to the model to use here
+model_path = "D:\GGUF\Hermes-2-Pro-Mistral-7B.Q8_0.gguf"  
+# your list of RSS feeds (Vox only picked because it features full content in rss)
+feeds = ["https://www.vox.com/rss/index.xml"]          
 
 prompt = """Rewrite the title and the content of the following news article in a humorous way while 
                 maintaining factual accuracy. Cover all information provided in your humorous rewrite. 
@@ -37,9 +40,9 @@ def home():
     if 'content' in session: 
         humorized = session['content']
     else:
-        articles = fetch_articles(target_rss)
+        articles = fetch_articles(feeds)
         articles = articles[:1]
-        humorized = humorize(articles, prompt)
+        humorized = humorize(articles, prompt, model_path)
         session['content'] = humorized
     return render_template('index.html', humorized=humorized)
 

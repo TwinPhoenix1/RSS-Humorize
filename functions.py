@@ -1,28 +1,41 @@
 import feedparser
 from bs4 import BeautifulSoup
 from llama_cpp.llama import Llama, LlamaGrammar
+import article_parser
 import json
 import lorem
 
-intercept_rss = "https://theintercept.com/feed/?lang=en"
-
-def fetch_articles(url):
-    feed = feedparser.parse(url)
-    articles = []
-    for entry in feed.entries:
-        title_soup = BeautifulSoup(entry.title, 'html.parser')
-        content_soup = BeautifulSoup(entry.content[0]['value'], 'html.parser')
-        article = {
-            'title': title_soup.get_text(), 
-            'content': content_soup.get_text()} 
-        articles.append(article)
+def fetch_articles(feeds):
+    for url in feeds:
+        feed = feedparser.parse(url)
+        articles = []
+        for entry in feed.entries:
+            print("ENTRY:  \n" + str(entry))
+            title_soup = BeautifulSoup(entry.title, 'html.parser')
+            content_soup = BeautifulSoup(entry.content[0]['value'], 'html.parser')
+            article = {
+                'title': title_soup.get_text(), 
+                'content': content_soup.get_text()} 
+            articles.append(article)
     return articles
 
-def humorize(articles, prompt):
+def scrape_articles(feeds):
+    for url in feeds:
+        feed = feedparser.parse(url)
+        articles = []
+        for entry in feed.entries:
+            title, content = article_parser.parse(url=entry.link, timeout=5)
+            article = {
+                'title': BeautifulSoup(title, 'html.parser'), 
+                'content': BeautifulSoup(content, 'html.parser')} 
+            articles.append(article)
+    return articles
+
+def humorize(articles, prompt, model_path):
     i=0
     humorized = []    
     llm = Llama(
-        model_path = "D:\GGUF\Hermes-2-Pro-Mistral-7B.Q8_0.gguf", 
+        model_path = model_path, 
         chat_format = "chatml", 
         n_ctx = 8192, 
         n_gpu_layers = 0)
